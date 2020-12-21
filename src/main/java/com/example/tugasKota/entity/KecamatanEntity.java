@@ -1,5 +1,7 @@
 package com.example.tugasKota.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,9 +11,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
+
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "kecamatan_table")
-public class KecamatanEntity {
+@NoArgsConstructor
+@AllArgsConstructor
+public class KecamatanEntity implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
@@ -20,15 +29,28 @@ public class KecamatanEntity {
 	@Column(name = "kode_kecamatan", unique = true, length = 25, nullable = false)
 	private String kodeKecamatan;
 	
-	@Column(name = "nama_kecamatan", unique = true, length = 25, nullable = false)
+	@Column(name = "nama_kecamatan")
 	private String namaKecamatan;
 	
+	@Column(name = "status")
+	private Integer status;
+
+
 	@ManyToOne
-	@JoinColumn(name = "prov_id")
+	@JoinColumn(name = "kode_provinsi", referencedColumnName = "kode_provinsi")
 	private ProvinsiEntity provinsiEntity;
+	
 	@ManyToOne
-	@JoinColumn(name = "kab_id")
+	@JoinColumn(name = "kode_kabupaten", referencedColumnName = "kode_kabupaten")
 	private KabupatenEntity kabupatenEntity;
+	
+	public Integer getStatus() {
+		return status;
+	}
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	
 	public Integer getId() {
 		return id;
 	}
@@ -59,12 +81,14 @@ public class KecamatanEntity {
 	public void setKabupatenEntity(KabupatenEntity kabupatenEntity) {
 		this.kabupatenEntity = kabupatenEntity;
 	}
-	public KecamatanEntity(Integer id, String kodeKecamatan, String namaKecamatan, ProvinsiEntity provinsiEntity,
-			KabupatenEntity kabupatenEntity) {
+	
+	public KecamatanEntity(Integer id, String kodeKecamatan, String namaKecamatan, Integer status,
+			ProvinsiEntity provinsiEntity, KabupatenEntity kabupatenEntity) {
 		super();
 		this.id = id;
 		this.kodeKecamatan = kodeKecamatan;
 		this.namaKecamatan = namaKecamatan;
+		this.status = status;
 		this.provinsiEntity = provinsiEntity;
 		this.kabupatenEntity = kabupatenEntity;
 	}

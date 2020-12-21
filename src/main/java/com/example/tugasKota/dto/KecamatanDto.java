@@ -3,8 +3,9 @@ package com.example.tugasKota.dto;
 public class KecamatanDto {
 	private String kodeKecamatan;
 	private String namaKecamatan;
-	private Integer provId;
-	private Integer kabId;
+	private String kodeKabupaten;
+	private String kodeProvinsi;
+	
 	public String getKodeKecamatan() {
 		return kodeKecamatan;
 	}
@@ -17,24 +18,25 @@ public class KecamatanDto {
 	public void setNamaKecamatan(String namaKecamatan) {
 		this.namaKecamatan = namaKecamatan;
 	}
-	public Integer getProvId() {
-		return provId;
-	}
-	public void setProvId(Integer provId) {
-		this.provId = provId;
-	}
-	public Integer getKabId() {
-		return kabId;
-	}
-	public void setKabId(Integer kabId) {
-		this.kabId = kabId;
-	}
-	public KecamatanDto(String kodeKecamatan, String namaKecamatan, Integer provId, Integer kabId) {
+	
+	public KecamatanDto(String kodeKecamatan, String namaKecamatan, String kodeKabupaten, String kodeProvinsi) {
 		super();
 		this.kodeKecamatan = kodeKecamatan;
 		this.namaKecamatan = namaKecamatan;
-		this.provId = provId;
-		this.kabId = kabId;
+		this.kodeKabupaten = kodeKabupaten;
+		this.kodeProvinsi = kodeProvinsi;
+	}
+	public String getKodeKabupaten() {
+		return kodeKabupaten;
+	}
+	public void setKodeKabupaten(String kodeKabupaten) {
+		this.kodeKabupaten = kodeKabupaten;
+	}
+	public String getKodeProvinsi() {
+		return kodeProvinsi;
+	}
+	public void setKodeProvinsi(String kodeProvinsi) {
+		this.kodeProvinsi = kodeProvinsi;
 	}
 	public KecamatanDto() {
 		super();

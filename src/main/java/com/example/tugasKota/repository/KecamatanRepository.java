@@ -20,5 +20,13 @@ public interface KecamatanRepository extends JpaRepository<KecamatanEntity, Inte
 
 	@Query(value = "select id from kecamatan_table where id = ?", nativeQuery = true)
 	Integer findIdById(Integer id);
+	
+	@Query(value = "select * from kecamatan_table where status = 1", nativeQuery = true)
+	List<KecamatanEntity> findActiveId();
+	
+	@Query(value = "select * from kecamatan_table where id = ?", nativeQuery = true)
+	List<KecamatanEntity> findAllById(Integer id);
+	
+	KecamatanEntity findByKodeKecamatan(String kodeKecamatan);
 }
 

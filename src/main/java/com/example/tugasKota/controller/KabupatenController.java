@@ -1,9 +1,9 @@
 package com.example.tugasKota.controller;
 
 import java.util.List;
-import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,78 +15,83 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.tugasKota.dto.KabupatenDto;
+import com.example.tugasKota.dto.StatusMessageDto;
 import com.example.tugasKota.entity.KabupatenEntity;
-import com.example.tugasKota.entity.ProvinsiEntity;
-import com.example.tugasKota.repository.KabupatenRepository;
-import com.example.tugasKota.repository.ProvinsiRepository;
+import com.example.tugasKota.service.KabupatenServiceImpl;
 
 
 @RestController
 @RequestMapping("/kabupaten")
 public class KabupatenController {
-	private	KabupatenRepository kabupatenRepository;
-	private	ProvinsiRepository provinsiRepository;
-	
 	@Autowired
-	public KabupatenController(KabupatenRepository kabupatenRepository, ProvinsiRepository provinsiRepository) {
-		super();
-		this.kabupatenRepository = kabupatenRepository;
-		this.provinsiRepository = provinsiRepository;
-	}
+	private KabupatenServiceImpl kabupatenService;
 
 	
 	@GetMapping("/get-all")
 	public ResponseEntity<?> getAll() {
-		List<KabupatenEntity> kabupatenEntity = kabupatenRepository.findAll();
-		return ResponseEntity.ok(kabupatenEntity);
+		return ResponseEntity.ok(kabupatenService.getAllKabupaten());
 	}
 	
 
-	@PostMapping("/post-kabupaten")
+	@PostMapping("/post")
 	public ResponseEntity<?> insertKabupaten(@RequestBody KabupatenDto dto){
-		KabupatenEntity kabupatenEntity = convertToKabupatenEntity(dto);
-		kabupatenRepository.save(kabupatenEntity);
-		return ResponseEntity.ok(kabupatenEntity );
+		StatusMessageDto<KabupatenEntity> result = new StatusMessageDto<>();
+		
+		if(dto.getNamaKabupaten().equals("")) {
+			result.setStatus(HttpStatus.BAD_REQUEST.value());
+			result.setMessage("Nama Harus Diisi!");
+			result.setData(null);
+			return ResponseEntity.badRequest().body(result);
+		} else {
+			result.setStatus(HttpStatus.OK.value());
+			result.setMessage("Data Ditambah!");
+			result.setData(kabupatenService.insertKabupaten(dto));
+			return ResponseEntity.ok(result);
+		}
 	}
 	
-//	isi kabupaten dari dataprovinsi sudah ada
-	@PostMapping("/post-kabupaten-prov")
-	public ResponseEntity<?> insertDetail(@RequestBody KabupatenDto dto){
-		KabupatenEntity kabupatenEntity = new KabupatenEntity();
-		ProvinsiEntity provinsiEntity = provinsiRepository.findById(dto.getProvId()).get();
-		
-		kabupatenEntity.setNamaKabupaten(dto.getNamaKabupaten());
-		kabupatenEntity.setKodeKabupaten(dto.getKodeKabupaten());
-		kabupatenEntity.setProvinsiEntity(provinsiEntity);
-		
-		kabupatenRepository.save(kabupatenEntity);
-		return ResponseEntity.ok(kabupatenEntity);
+	@PostMapping("/post-list")
+	public ResponseEntity<?> insertList(@RequestBody List<KabupatenDto> dto) {
+		for (KabupatenDto kabupaten : dto) {
+			kabupatenService.insertKabupaten(kabupaten);
+		}
+		return ResponseEntity.ok(dto);
 	}
 	
 	@GetMapping("/get-kab-by-id/{id}")
 	public ResponseEntity<?> getById(@PathVariable Integer id){
-		KabupatenDto dto = new KabupatenDto();
-		dto.setKodeKabupaten(kabupatenRepository.findKodeById(id));
-		dto.setNamaKabupaten(kabupatenRepository.findNameById(id));
-		return ResponseEntity.ok(dto);
+		return ResponseEntity.ok(kabupatenService.getById(id));
 }
+	
+	@GetMapping("/get-by-provcode/{kodeProvinsi}")
+	public ResponseEntity<?> getByKodeProvinsi(@PathVariable String kodeProvinsi) {
+		return ResponseEntity.ok(kabupatenService.getByKodeProvinsi(kodeProvinsi));
+	}
 	
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> delete(@PathVariable Integer id){
-		KabupatenEntity kabupatenEntity = kabupatenRepository.findById(id).get();
-		kabupatenRepository.delete(kabupatenEntity);
-		return ResponseEntity.ok(kabupatenEntity);
+		StatusMessageDto<KabupatenEntity> result = new StatusMessageDto<>();
+		result.setStatus(HttpStatus.OK.value());
+		result.setMessage("Data Dihapus!");
+		result.setData(kabupatenService.deleteKabupaten(id));
+		return ResponseEntity.ok(result);
 	}
 	
 	@PutMapping("/update/{id}")
 	public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody KabupatenDto dto){
-		KabupatenEntity kabupatenEntity = kabupatenRepository.findById(id).get();
-
-		kabupatenEntity.setNamaKabupaten(dto.getNamaKabupaten());
-		kabupatenEntity.setKodeKabupaten(dto.getKodeKabupaten());
+		StatusMessageDto<KabupatenEntity> result = new StatusMessageDto<>();
 		
-		kabupatenRepository.save(kabupatenEntity);
-		return ResponseEntity.ok(kabupatenEntity);
+		if(dto.getNamaKabupaten().equals("")) {
+			result.setStatus(HttpStatus.BAD_REQUEST.value());
+			result.setMessage("Nama Harus Diisi!");
+			result.setData(null);
+			return ResponseEntity.badRequest().body(result);
+		} else {
+			result.setStatus(HttpStatus.OK.value());
+			result.setMessage("Data Diperbarui!");
+			result.setData(kabupatenService.updateKabupaten(id, dto));
+			return ResponseEntity.ok(result);
+		}
 	}
 	
 	

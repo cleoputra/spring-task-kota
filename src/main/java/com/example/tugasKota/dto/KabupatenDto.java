@@ -3,7 +3,7 @@ package com.example.tugasKota.dto;
 public class KabupatenDto {
 	private String kodeKabupaten;
 	private String namaKabupaten;
-	private Integer provId;
+	private String kodeProvinsi;
 	public String getKodeKabupaten() {
 		return kodeKabupaten;
 	}
@@ -16,17 +16,18 @@ public class KabupatenDto {
 	public void setNamaKabupaten(String namaKabupaten) {
 		this.namaKabupaten = namaKabupaten;
 	}
-	public Integer getProvId() {
-		return provId;
-	}
-	public void setProvId(Integer provId) {
-		this.provId = provId;
-	}
-	public KabupatenDto(String kodeKabupaten, String namaKabupaten, Integer provId) {
+
+	public KabupatenDto(String kodeKabupaten, String namaKabupaten, String kodeProvinsi) {
 		super();
 		this.kodeKabupaten = kodeKabupaten;
 		this.namaKabupaten = namaKabupaten;
-		this.provId = provId;
+		this.kodeProvinsi = kodeProvinsi;
+	}
+	public String getKodeProvinsi() {
+		return kodeProvinsi;
+	}
+	public void setKodeProvinsi(String kodeProvinsi) {
+		this.kodeProvinsi = kodeProvinsi;
 	}
 	public KabupatenDto() {
 		super();

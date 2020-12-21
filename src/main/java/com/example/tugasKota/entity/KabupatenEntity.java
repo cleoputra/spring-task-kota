@@ -1,5 +1,7 @@
 package com.example.tugasKota.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,9 +11,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
+@SuppressWarnings("serial")
 @Entity
 @Table(name = "kabupaten_table")
-public class KabupatenEntity {
+@NoArgsConstructor
+@AllArgsConstructor
+public class KabupatenEntity implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
@@ -20,11 +28,14 @@ public class KabupatenEntity {
 	@Column(name = "kode_kabupaten", unique = true, length = 25, nullable = false)
 	private String kodeKabupaten;
 	
-	@Column(name = "nama_provinsi", unique = true, length = 25, nullable = false)
+	@Column(name = "nama_provinsi")
 	private String namaKabupaten;
 	
+	@Column(name = "status")
+	private Integer status;
+	
 	@ManyToOne
-	@JoinColumn(name = "prov_id")
+	@JoinColumn(name = "kode_provinsi", referencedColumnName = "kode_provinsi")
 	private ProvinsiEntity provinsiEntity;
 
 	public ProvinsiEntity getProvinsiEntity() {
@@ -33,6 +44,15 @@ public class KabupatenEntity {
 
 	public void setProvinsiEntity(ProvinsiEntity provinsiEntity) {
 		this.provinsiEntity = provinsiEntity;
+	}
+
+	
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 
 	public Integer getId() {
@@ -59,11 +79,14 @@ public class KabupatenEntity {
 		this.namaKabupaten = namaKabupaten;
 	}
 
-	public KabupatenEntity(Integer id, String kodeKabupaten, String namaKabupaten, ProvinsiEntity provinsiEntity) {
+
+	public KabupatenEntity(Integer id, String kodeKabupaten, String namaKabupaten, Integer status,
+			ProvinsiEntity provinsiEntity) {
 		super();
 		this.id = id;
 		this.kodeKabupaten = kodeKabupaten;
 		this.namaKabupaten = namaKabupaten;
+		this.status = status;
 		this.provinsiEntity = provinsiEntity;
 	}
 

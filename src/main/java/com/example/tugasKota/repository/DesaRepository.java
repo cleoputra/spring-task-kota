@@ -20,4 +20,11 @@ public interface DesaRepository extends JpaRepository<DesaEntity, Integer>{
 
 	@Query(value = "select id from desa_table where id = ?", nativeQuery = true)
 	Integer findIdById(Integer id);
+	
+	@Query(value = "select * from desa_table where status = 1", nativeQuery = true)
+	List<DesaEntity> findActiveId();
+	
+	@Query(value = "select * from desa_table where id = ?", nativeQuery = true)
+	List<DesaEntity> findAllById(Integer id);
+
 }

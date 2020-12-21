@@ -20,4 +20,15 @@ public interface KabupatenRepository extends JpaRepository<KabupatenEntity, Inte
 
 	@Query(value = "select id from kabupaten_table where id = ?", nativeQuery = true)
 	Integer findIdById(Integer id);
+	
+	@Query(value = "select * from kabupaten_table where status = 1", nativeQuery = true)
+	List<KabupatenEntity> findActiveId();
+
+	@Query(value = "select * from kabupaten_table where id = ?", nativeQuery = true)
+	List<KabupatenEntity> findAllById(Integer id);
+
+	@Query(value = "select * from kabupaten_table where kode_provinsi = ?", nativeQuery = true)
+	List<KabupatenEntity> findAllByKodeProvinsi(String kodeProvinsi);
+	
+	KabupatenEntity findByKodeKabupaten(String kodeKabupaten);
 }

@@ -1,8 +1,7 @@
 package com.example.tugasKota.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,89 +13,67 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.tugasKota.dto.KecamatanDto;
-import com.example.tugasKota.entity.KabupatenEntity;
+import com.example.tugasKota.dto.StatusMessageDto;
 import com.example.tugasKota.entity.KecamatanEntity;
-import com.example.tugasKota.entity.ProvinsiEntity;
-import com.example.tugasKota.repository.KabupatenRepository;
-import com.example.tugasKota.repository.KecamatanRepository;
-import com.example.tugasKota.repository.ProvinsiRepository;
+import com.example.tugasKota.service.KecamatanServiceImpl;
 
 
 @RestController
 @RequestMapping("/kecamatan")
 public class KecamatanController {
-	private KecamatanRepository kecamatanRepository;
-	private KabupatenRepository kabupatenRepository;
-	private ProvinsiRepository provinsiRepository;
 	@Autowired
-	public KecamatanController(KecamatanRepository kecamatanRepository, KabupatenRepository kabupatenRepository,
-			ProvinsiRepository provinsiRepository) {
-		super();
-		this.kecamatanRepository = kecamatanRepository;
-		this.kabupatenRepository = kabupatenRepository;
-		this.provinsiRepository = provinsiRepository;
-	}
-		
+	private KecamatanServiceImpl kecamatanService;
+	
 	@GetMapping("/get-all")
-	public ResponseEntity<?> getAll() {
-		List<KecamatanEntity> kecamatanEntity = kecamatanRepository.findAll();
-		return ResponseEntity.ok(kecamatanEntity);
+	private ResponseEntity<?> getAll() {
+		return ResponseEntity.ok(kecamatanService.getAllKecamatan());
 	}
 	
-	@PostMapping("/post-kecamatan")
-	public ResponseEntity<?> insertKecamatan(@RequestBody KecamatanDto dto){
-		KecamatanEntity kecamatanEntity = converToKecamatanEntity(dto);
-		kecamatanRepository.save(kecamatanEntity);
-		return ResponseEntity.ok(kecamatanEntity);
+	@GetMapping("/get-by-id/{id}")
+	private ResponseEntity<?> getById(Integer id) {
+		return ResponseEntity.ok(kecamatanService.getById(id));
 	}
 	
-	@PostMapping("/post-kecamatan-kab-prov")
-	public ResponseEntity<?> insertDetail(@RequestBody KecamatanDto dto){
-		KecamatanEntity kecamatanEntity = new KecamatanEntity();
-		KabupatenEntity kabupatenEntity = kabupatenRepository.findById(dto.getKabId()).get();
-		ProvinsiEntity provinsiEntity = provinsiRepository.findById(dto.getProvId()).get();
-	
-		kecamatanEntity.setKodeKecamatan(dto.getKodeKecamatan());
-		kecamatanEntity.setNamaKecamatan(dto.getNamaKecamatan());
-		kecamatanEntity.setProvinsiEntity(provinsiEntity);
-		kecamatanEntity.setKabupatenEntity(kabupatenEntity);
+	@PostMapping("/post")
+	private ResponseEntity<?> insert(@RequestBody KecamatanDto dto) {
+		StatusMessageDto<KecamatanEntity> result = new StatusMessageDto<>();
 		
-		kecamatanRepository.save(kecamatanEntity);
-		return ResponseEntity.ok(kecamatanEntity);
+		if(dto.getNamaKecamatan().equals("")) {
+			result.setStatus(HttpStatus.BAD_REQUEST.value());
+			result.setMessage("Nama Harus Diisi!");
+			result.setData(null);
+			return ResponseEntity.badRequest().body(result);
+		} else {
+			result.setStatus(HttpStatus.OK.value());
+			result.setMessage("Data Ditambah!");
+			result.setData(kecamatanService.insertKecamatan(dto));
+			return ResponseEntity.ok(result);
+		}
 	}
 	
 	@PutMapping("/update/{id}")
-	public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody KecamatanDto dto){
-		KecamatanEntity kecamatanEntity = kecamatanRepository.findById(id).get();
+	public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody KecamatanDto dto) {
+		StatusMessageDto<KecamatanEntity> result = new StatusMessageDto<>();
 		
-		kecamatanEntity.setKodeKecamatan(dto.getKodeKecamatan());
-		kecamatanEntity.setNamaKecamatan(dto.getNamaKecamatan());
-		
-		kecamatanRepository.save(kecamatanEntity);
-		return ResponseEntity.ok(kecamatanEntity);
-	}
-	
-	@GetMapping("/get-kec-by-id/{id}")
-	public ResponseEntity<?> getById(@PathVariable Integer id){
-		KecamatanDto dto = new KecamatanDto();
-		dto.setKodeKecamatan(kecamatanRepository.findKodeById(id));
-		dto.setNamaKecamatan(kecamatanRepository.findNameById(id));
-		return ResponseEntity.ok(dto);
+		if(dto.getNamaKecamatan().equals("")) {
+			result.setStatus(HttpStatus.BAD_REQUEST.value());
+			result.setMessage("Nama Harus Diisi!");
+			result.setData(null);
+			return ResponseEntity.badRequest().body(result);
+		} else {
+			result.setStatus(HttpStatus.OK.value());
+			result.setMessage("Data Diperbarui!");
+			result.setData(kecamatanService.updateKecamatan(id, dto));
+			return ResponseEntity.ok(result);
+		}
 	}
 	
 	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<?> delete(@PathVariable Integer id){
-		KecamatanEntity kecamatanEntity = kecamatanRepository.findById(id).get();
-		kecamatanRepository.delete(kecamatanEntity);
-		return ResponseEntity.ok(kecamatanEntity);
-	}
-
-	
-	
-	public KecamatanEntity converToKecamatanEntity(KecamatanDto dto) {
-		KecamatanEntity kecamatanEntity = new KecamatanEntity();
-		kecamatanEntity.setKodeKecamatan(dto.getKodeKecamatan());
-		kecamatanEntity.setNamaKecamatan(dto.getNamaKecamatan());
-		return kecamatanEntity;
+	public ResponseEntity<?> delete(@PathVariable Integer id) {
+		StatusMessageDto<KecamatanEntity> result = new StatusMessageDto<>();
+		result.setStatus(HttpStatus.OK.value());
+		result.setMessage("Data Dihapus!");
+		result.setData(kecamatanService.deleteKecamatan(id));
+		return ResponseEntity.ok(result);
 	}
 }
