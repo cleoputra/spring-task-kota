@@ -9,12 +9,29 @@
 </head>
 <body>
 <div th:replace="fragments/header :: header-frag"></div>
-<h1>Test</h1>
+<div>
+	<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">id</th>
+      <th scope="col">Kode</th>
+      <th scope="col">Nama</th>
+      <th scope="col">Status</th>
+    </tr>
+  </thead>
+  <tbody id="body-person">
+  </tbody>
+</table>
+</div>
 
 	
 	<script type="text/javascript" src="/webjars/jquery/3.5.1/jquery.min.js"></script>
 	<script type="text/javascript" src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 	<script type="text/javascript" th:src="@{/js/script.js}"></script>
 	
+	<script th:src="@{/js/script.js}"></script>
+	<script>
+		tablePerson.create();
+	</script>
 </body>
 </html>
